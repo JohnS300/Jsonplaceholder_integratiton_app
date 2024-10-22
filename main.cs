@@ -1,12 +1,8 @@
 ﻿using System;
-/*using Systems.Collections.Generic;
-using Systems.Linq;
-using Systems.Web;
-using Systems.Web.UI;
-using Systems.Web.UI.WebControls;*/
+using System.Net.Http;
 
 namespace CoreConsole{
-    class JsonGet{
+    class Program{
         static void Main(string[] args){
             using(var client = new HttpClient()){
                 var endpoint = new Uri ("https://jsonplaceholder.typicode.com/posts");
