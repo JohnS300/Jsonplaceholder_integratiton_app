@@ -11,7 +11,12 @@ namespace CoreConsole{
                 Body = "Hello World",
                 UserId = 44,
             };
-            var newPostJson=JsonConvert
+            var newPostJson=JsonConvert.SerializeObject(newPost);
+            Console.WriteLine("newPost");
+            Console.WriteLine(newPost);
+            Console.WriteLine("newPostJson");
+            Console.WriteLine(newPostJson);
+
         };
 
 
