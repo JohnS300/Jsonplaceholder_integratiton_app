@@ -8,14 +8,9 @@ namespace CoreConsole
 {
     public class ApiClient
     {
-        private readonly HttpClient client;
+        private static readonly HttpClient client = new HttpClient();
 
-        public ApiClient()
-        {
-            client = new HttpClient();
-        }
-
-        public async Task<string> GetAsync(string url, object data = null)
+        public async Task<string> GetAsync(string url)
         {
             var response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
@@ -40,7 +35,7 @@ namespace CoreConsole
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> DeleteAsync(string url, object data = null)
+        public async Task<string> DeleteAsync(string url)
         {
             var response = await client.DeleteAsync(url);
             response.EnsureSuccessStatusCode();
