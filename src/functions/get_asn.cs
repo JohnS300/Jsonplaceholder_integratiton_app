@@ -1,18 +1,33 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Logging;
 
 namespace CoreConsole
 {
-    public class GetHandler
+    public class GetASNs
     {
-        private readonly ApiClient apiClient = new ApiClient();
-        private const string Url = "https://jsonplaceholder.typicode.com/posts";
+        private readonly ApiClient _apiClient = new ApiClient();
+        private const string AsnEndpoint = "https://customer-api.com/asns";
 
-        public async Task ExecuteAsync()
+        [FunctionName("GetASNs")]
+        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo timer, ILogger log)
         {
-            Console.WriteLine("Executing GET request...");
-            string response = await apiClient.GetAsync(Url);
-            Console.WriteLine(response);
+            log.LogInformation("Fetching ASNs...");
+
+            string jsonResponse = await _apiClient.GetAsync(AsnEndpoint);
+            var asns = JsonConvert.DeserializeObject<List<ASN>>(jsonResponse);
+
+            foreach (var asn in asns)
+            {
+                await DatabaseService.UpdateOrderStatus(asn.OrderId, "ASNReceived");
+
+                if (await DatabaseService.IsOrderComplete(asn.OrderId))
+                {
+                    await DatabaseService.DeleteOrder(asn.OrderId);
+                }
+            }
+
+            log.LogInformation("ASN processing complete.");
         }
     }
 }
